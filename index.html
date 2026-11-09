@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#090d14">
+  <title>IT Operations Center</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <div class="brand-mark"><span></span><span></span><span></span></div>
+        <div><strong>OPS<span>CORE</span></strong><small>OPERATIONS CENTER</small></div>
+      </div>
+
+      <div class="workspace-label">WORKSPACE</div>
+      <nav class="main-nav" aria-label="เมนูหลัก">
+        <button class="nav-item active" data-page="overview"><i class="nav-icon">▦</i><span>Overview</span></button>
+        <button class="nav-item" data-page="servers"><i class="nav-icon">▤</i><span>Server Room</span></button>
+        <button class="nav-item" data-page="security"><i class="nav-icon">◈</i><span>Security Center</span><b id="securityNavCount" class="nav-count">0</b></button>
+        <button class="nav-item" data-page="incidents"><i class="nav-icon">▣</i><span>Incidents</span><b id="incidentNavCount" class="nav-count">0</b></button>
+        <button class="nav-item" data-page="logs"><i class="nav-icon">≡</i><span>System Logs</span></button>
+      </nav>
+
+      <div class="sidebar-bottom">
+        <div class="connection-card">
+          <div class="connection-top"><span class="live-dot"></span><span>CORE NETWORK</span><b>ACTIVE</b></div>
+          <div class="connection-line"><span></span></div>
+          <small id="networkNote">All systems operational</small>
+        </div>
+        <button class="nav-item settings-link" id="settingsButton"><i class="nav-icon">⚙</i><span>Preferences</span></button>
+        <div class="user-profile">
+          <div class="avatar">OC</div>
+          <div><strong>Operator</strong><small>System Administrator</small></div>
+          <span class="profile-menu">•••</span>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="mobile-menu" id="mobileMenu" aria-label="เปิดเมนู">☰</button>
+          <div class="breadcrumb">Operations <span>/</span> <strong id="pageCrumb">Overview</strong></div>
+        </div>
+        <div class="topbar-right">
+          <div class="system-clock" id="clock">--:--:--</div>
+          <div class="topbar-divider"></div>
+          <div class="top-status"><span class="live-dot"></span> SYSTEM ONLINE</div>
+          <button class="icon-button" id="soundToggle" title="เสียง">♫</button>
+          <button class="icon-button" id="themeToggle" title="เปลี่ยนธีม">◐</button>
+        </div>
+      </header>
+
+      <section class="page active" id="page-overview">
+        <div class="page-heading">
+          <div><p class="eyebrow">CONTROL ROOM / OVERVIEW</p><h1>Operations Overview</h1><p class="subheading">ภาพรวมสถานะโครงสร้างพื้นฐานและบริการทั้งหมด</p></div>
+          <div class="heading-actions"><span class="date-chip" id="dateLabel">—</span><button class="button button-quiet" id="refreshOverview">↻ Refresh</button></div>
+        </div>
+
+        <div class="metric-grid">
+          <article class="metric-card"><div class="metric-head"><span>Total Servers</span><span class="metric-icon blue">▤</span></div><div class="metric-value" id="totalServers">15</div><div class="metric-foot">Across 3 server racks</div></article>
+          <article class="metric-card"><div class="metric-head"><span>Online</span><span class="metric-icon green">✓</span></div><div class="metric-value" id="onlineServers">15</div><div class="metric-foot"><span class="tiny-dot green-dot"></span> Services available</div></article>
+          <article class="metric-card"><div class="metric-head"><span>Attention Required</span><span class="metric-icon amber">!</span></div><div class="metric-value" id="warningServers">0</div><div class="metric-foot">Requires operator action</div></article>
+          <article class="metric-card"><div class="metric-head"><span>Open Incidents</span><span class="metric-icon red">⌁</span></div><div class="metric-value" id="openIncidents">0</div><div class="metric-foot">Unresolved events</div></article>
+        </div>
+
+        <div class="dashboard-grid">
+          <article class="panel infrastructure-panel">
+            <div class="panel-heading"><div><h2>Infrastructure Status</h2><p>สถานะเครื่องแม่ข่ายในแต่ละตู้</p></div><button class="text-button" data-goto="servers">View all servers →</button></div>
+            <div class="rack-overview" id="rackOverview"></div>
+          </article>
+          <article class="panel activity-panel">
+            <div class="panel-heading"><div><h2>Recent Activity</h2><p>รายการเหตุการณ์ล่าสุด</p></div><button class="text-button" data-goto="logs">View logs →</button></div>
+            <div class="activity-list" id="recentActivity"></div>
+          </article>
+        </div>
+        <article class="panel service-panel">
+          <div class="panel-heading"><div><h2>Service Availability</h2><p>ภาพรวมบริการที่กำลังทำงาน</p></div><span class="status-pill success" id="serviceStatusPill">ALL SERVICES RUNNING</span></div>
+          <div class="service-grid" id="serviceGrid"></div>
+        </article>
+      </section>
+
+      <section class="page" id="page-servers">
+        <div class="page-heading">
+          <div><p class="eyebrow">INFRASTRUCTURE / HARDWARE</p><h1>Server Room</h1><p class="subheading">จัดการเครื่องแม่ข่ายและการเชื่อมต่อเครือข่าย</p></div>
+          <div class="heading-actions"><span class="status-pill success"><span class="tiny-dot green-dot"></span> RACKS CONNECTED</span></div>
+        </div>
+        <div class="server-toolbar"><div class="filter-tabs" id="serverFilters"><button class="filter-tab active" data-filter="all">All servers <span id="filterAll">15</span></button><button class="filter-tab" data-filter="online">Online <span id="filterOnline">15</span></button><button class="filter-tab" data-filter="warning">Attention <span id="filterWarning">0</span></button></div><div class="toolbar-note"><span class="tiny-dot green-dot"></span> Live infrastructure view</div></div>
+        <div class="server-racks" id="serverRacks"></div>
+        <article class="panel selected-server-panel" id="selectedServerPanel">
+          <div class="panel-heading"><div><h2>Server Details</h2><p id="selectedServerHint">เลือกเครื่องแม่ข่ายเพื่อดูรายละเอียด</p></div><span class="status-pill neutral" id="selectedServerStatus">NO SELECTION</span></div>
+          <div id="serverDetails" class="server-details empty-state">Select a server from the rack above.</div>
+        </article>
+      </section>
+
+      <section class="page" id="page-security">
+        <div class="page-heading">
+          <div><p class="eyebrow">PROTECTION / MONITORING</p><h1>Security Center</h1><p class="subheading">ติดตามการแจ้งเตือนและตรวจสอบความปลอดภัยของระบบ</p></div>
+          <span class="status-pill success"><span class="tiny-dot green-dot"></span> MONITORING ACTIVE</span>
+        </div>
+        <div class="security-banner"><div class="security-emblem">◈</div><div><strong>Security monitoring is active</strong><p>ระบบกำลังตรวจสอบเหตุการณ์ผิดปกติและสถานะของเครื่องแม่ข่าย</p></div><div class="banner-state"><span class="live-dot"></span> PROTECTED</div></div>
+        <div class="security-stats" id="securityStats"></div>
+        <article class="panel"><div class="panel-heading"><div><h2>Security Events</h2><p>เหตุการณ์ด้านความปลอดภัยที่ต้องตรวจสอบ</p></div><span class="muted-label">LATEST FIRST</span></div><div id="securityEvents" class="event-list"></div></article>
+      </section>
+
+      <section class="page" id="page-incidents">
+        <div class="page-heading"><div><p class="eyebrow">OPERATIONS / RESPONSE</p><h1>Incident Management</h1><p class="subheading">ติดตามและจัดการเหตุการณ์ที่เกิดขึ้นในระบบ</p></div><span class="status-pill neutral" id="incidentTotalLabel">0 INCIDENTS</span></div>
+        <div class="incident-summary" id="incidentSummary"></div>
+        <article class="panel"><div class="panel-heading"><div><h2>Incident Queue</h2><p>รายการเหตุการณ์ทั้งหมด</p></div><div class="filter-tabs compact" id="incidentFilters"><button class="filter-tab active" data-filter="all">All</button><button class="filter-tab" data-filter="open">Open</button><button class="filter-tab" data-filter="resolved">Resolved</button></div></div><div id="incidentList" class="incident-list"></div></article>
+      </section>
+
+      <section class="page" id="page-logs">
+        <div class="page-heading"><div><p class="eyebrow">SYSTEM / AUDIT TRAIL</p><h1>System Logs</h1><p class="subheading">บันทึกกิจกรรมและการเปลี่ยนแปลงภายในระบบ</p></div><button class="button button-quiet" id="exportLogs">↓ Export logs</button></div>
+        <article class="panel logs-panel"><div class="logs-toolbar"><div class="logs-search"><span>⌕</span><input id="logSearch" placeholder="ค้นหาบันทึก..." autocomplete="off"></div><span class="muted-label" id="logCount">0 RECORDS</span></div><div class="log-table-wrap"><table class="log-table"><thead><tr><th>TIME</th><th>LEVEL</th><th>EVENT</th><th>DETAIL</th></tr></thead><tbody id="logRows"></tbody></table></div></article>
+      </section>
+
+      <footer class="app-footer"><span>OPSCORE <b>•</b> OPERATIONS MANAGEMENT</span><span>LOCAL CONSOLE <b>•</b> <span id="footerTime">—</span></span></footer>
+    </main>
+  </div>
+
+  <div class="modal-backdrop" id="actionModal" aria-hidden="true">
+    <section class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <button class="modal-close" id="closeModal" aria-label="ปิด">×</button>
+      <div class="modal-symbol" id="modalSymbol">↻</div><p class="eyebrow" id="modalEyebrow">SERVER ACTION</p><h2 id="modalTitle">Restart Server</h2><p class="modal-description" id="modalDescription"></p>
+      <div id="modalBody"></div>
+      <div class="modal-actions" id="modalActions"></div>
+    </section>
+  </div>
+
+  <div class="toast-region" id="toastRegion" aria-live="polite"></div>
+
+  <script src="./audio.js"></script>
+  <script src="./script.js"></script>
+</body>
+</html>
